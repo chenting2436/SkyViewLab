@@ -27,8 +27,8 @@ python --version
 ## 2. 克隆代码
 
 ```powershell
-git clone git@github.com:chenting2436/web.git
-Set-Location .\web
+git clone git@github.com:chenting2436/SkyViewLab.git
+Set-Location .\SkyViewLab
 ```
 
 如果使用仓库 Deploy Key，请确保本机 SSH 配置选择了对应私钥。
