@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { ArrowRight, BookMarked, FolderKanban, MessageSquare } from 'lucide-react';
 import { ProfileIdentity } from '@/components/profile-identity';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 
 export const metadata: Metadata = { title: '个人中心' };
 
@@ -17,7 +16,6 @@ const spaces = [
 export default function ProfilePage() {
   return (
     <div className="site-shell subpage-shell">
-      <SiteHeader />
       <main className="page-width subpage-main profile-main">
         <ProfileIdentity />
 

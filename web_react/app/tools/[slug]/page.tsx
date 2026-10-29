@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 import { WorkbenchAvailability } from '@/components/workbench-availability';
 import { getWorkbench, workbenches } from '@/lib/platform-data';
 
@@ -19,7 +18,6 @@ export default async function WorkbenchPage({
 
   return (
     <div className="site-shell subpage-shell">
-      <SiteHeader />
       <main className="page-width workspace-main workbench-page-main">
         <WorkbenchAvailability workbench={workbench} />
       </main>

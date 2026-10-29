@@ -2,14 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 
 export const metadata: Metadata = { title: '作业管理' };
 
 export default function HomeworkPage() {
   return (
     <div className="site-shell subpage-shell">
-      <SiteHeader />
       <main className="page-width workspace-main">
         <nav className="breadcrumb"><Link href="/profile"><ArrowLeft size={15} />返回个人中心</Link></nav>
         <section className="workspace-heading"><h1>作业管理</h1></section>

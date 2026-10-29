@@ -25,6 +25,7 @@
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.2",
     "input-otp": "1.4.2",
+    "lottie-react": "^2.4.1",
     "lucide-react": "1.31.0",
     "monaco-editor": "0.56.0",
     "react": "19.2.8",

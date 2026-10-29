@@ -1,5 +1,4 @@
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 import { WorkbenchStyleGallery } from '@/components/workbench-style-gallery';
 
 export const metadata = {
@@ -10,7 +9,6 @@ export const metadata = {
 export default function StyleLabPage() {
   return (
     <div className="site-shell style-lab-shell">
-      <SiteHeader />
       <main className="page-width style-lab-main">
         <WorkbenchStyleGallery />
       </main>

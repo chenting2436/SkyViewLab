@@ -1,25 +1,16 @@
+import { PageGuideAssistant } from '@/components/page-guide-assistant';
+import { SectionShowcase } from '@/components/section-showcase';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
-import { WorkbenchGrid } from '@/components/workbench-grid';
-import {
-  getSectionWorkbenches,
-  sections,
-  type SectionKey,
-} from '@/lib/platform-data';
+import { type SectionKey } from '@/lib/platform-data';
 
 export function SectionOverview({ sectionKey }: { sectionKey: SectionKey }) {
-  const section = sections[sectionKey];
-  const items = getSectionWorkbenches(sectionKey);
-
   return (
-    <div className="site-shell subpage-shell">
-      <SiteHeader />
-      <main className="page-width subpage-main workbench-index-main">
-        <section className="tool-section workbench-index-section" aria-label={`${section.title}工作台`}>
-          <WorkbenchGrid items={items} />
-        </section>
+    <div className="site-shell section-showcase-shell">
+      <main className="section-showcase-main">
+        <SectionShowcase sectionKey={sectionKey} />
       </main>
       <SiteFooter />
+      <PageGuideAssistant sectionKey={sectionKey} />
     </div>
   );
 }

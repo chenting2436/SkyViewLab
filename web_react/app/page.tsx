@@ -2,14 +2,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { LiveEarthClock, ShanghaiTimeReadout } from '@/components/live-earth-clock';
 import { SiteFooter } from '@/components/site-footer';
-import { SiteHeader } from '@/components/site-header';
 import { homeEntrances } from '@/lib/site-data';
 
 export default function Home() {
   return (
-    <div className="site-shell">
-      <SiteHeader />
-
+    <div className="site-shell section-showcase-shell">
       <main className="home-main page-width">
         <section className="page-width hero-grid">
           <div>

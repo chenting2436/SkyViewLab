@@ -1,25 +1,35 @@
 'use client';
 
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import * as THREE from 'three';
+import { useLanguage } from '@/components/language-provider';
+import type { Locale } from '@/lib/i18n';
 
 const SHANGHAI_OFFSET = 8 * 60 * 60 * 1000;
 
-const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  weekday: 'long',
-  timeZone: 'Asia/Shanghai',
-});
+function localeTag(locale: Locale) {
+  return locale === 'zh' ? 'zh-CN' : 'en-US';
+}
 
-const timeFormatter = new Intl.DateTimeFormat('zh-CN', {
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hour12: false,
-  timeZone: 'Asia/Shanghai',
-});
+function createDateFormatter(locale: Locale) {
+  return new Intl.DateTimeFormat(localeTag(locale), {
+    year: 'numeric',
+    month: locale === 'zh' ? '2-digit' : 'long',
+    day: 'numeric',
+    weekday: 'long',
+    timeZone: 'Asia/Shanghai',
+  });
+}
+
+function createTimeFormatter(locale: Locale) {
+  return new Intl.DateTimeFormat(localeTag(locale), {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Shanghai',
+  });
+}
 
 function getClockAngles(now: Date) {
   const shanghaiTime = new Date(now.getTime() + SHANGHAI_OFFSET);
@@ -44,24 +54,38 @@ function polarPosition(index: number, total: number, radius: number): CSSPropert
 }
 
 export function LiveEarthClock() {
+  const { text } = useLanguage();
   const containerRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
-    const canvas = canvasRef.current;
-    if (!container || !canvas) return;
+    if (!container) return;
+
+    // Create a fresh canvas each mount. Reusing a React-ref canvas after
+    // Strict Mode / HMR dispose often throws "Error creating WebGL context".
+    const canvas = document.createElement('canvas');
+    canvas.className = 'earth-webgl-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+    container.insertBefore(canvas, container.firstChild);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     camera.position.set(0, 0, 4.2);
 
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true,
-      powerPreference: 'high-performance',
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'default',
+        failIfMajorPerformanceCaveat: false,
+      });
+    } catch {
+      canvas.remove();
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
@@ -234,14 +258,18 @@ export function LiveEarthClock() {
       normalTexture.dispose();
       specularTexture.dispose();
       cloudTexture.dispose();
+      renderer.forceContextLoss();
       renderer.dispose();
+      canvas.remove();
     };
   }, []);
 
   return (
-    <section ref={containerRef} className="earth-clock-react" aria-label="3D 旋转地球时钟">
-      <canvas ref={canvasRef} className="earth-webgl-canvas" aria-hidden="true" />
-
+    <section
+      ref={containerRef}
+      className="earth-clock-react"
+      aria-label={text('3D 旋转地球时钟', '3D rotating Earth clock')}
+    >
       <div className="earth-clock-eyebrow" aria-hidden="true">
         <span /> LIVE EARTH · CST
       </div>
@@ -276,13 +304,15 @@ export function LiveEarthClock() {
         <i className="clock-hand-react clock-hand-second" />
         <i className="clock-center-dot" />
       </div>
-
     </section>
   );
 }
 
 export function ShanghaiTimeReadout() {
+  const { locale, text } = useLanguage();
   const [now, setNow] = useState<Date | null>(null);
+  const dateFormatter = useMemo(() => createDateFormatter(locale), [locale]);
+  const timeFormatter = useMemo(() => createTimeFormatter(locale), [locale]);
 
   useEffect(() => {
     const update = () => setNow(new Date());
@@ -297,7 +327,7 @@ export function ShanghaiTimeReadout() {
         {now ? timeFormatter.format(now) : '--:--:--'}
       </time>
       <time className="home-calendar-date">
-        {now ? dateFormatter.format(now) : '正在同步时间'}
+        {now ? dateFormatter.format(now) : text('正在同步时间', 'Syncing time…')}
       </time>
     </div>
   );
